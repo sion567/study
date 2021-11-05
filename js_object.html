@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+var app = app||{};
+
+(function(){
+ var code=1;
+ function a(){}
+ app.tool = {
+   a: function(){}
+ }
+})();
+
+app.foo = (function(){
+  function a(){}
+  return {
+     a:a
+  }
+})();
+
+app.say = function(){};
+
+var xx={};
+xx.f1 = function(){};
+xx.f2 = function(){};
+
+
+
+// (function(){}())与(function(){})() 这两种写法,都是一种立即执行函数的写法,即IIFE (Immediately Invoked Function Expression)
+// (function foo(arg1,arg2,...){}(param1,param2,...))
+
+var oauth2Lib = {};
+(function() {
+    var sina_id = "sina", taobo_id="taobao", wx_id="weixin", qq_id="QQ",
+        ids=[sina_id, taobo_id, wx_id, qq_id];
+    oauth2Lib.exec = function(option) {
+        var doing = option.doing,
+           validate = option.validate,
+           cb = option.cb,
+           isExitLogin = option.isExitLogin,
+           results = {};
+
+        var execNext = (function() {
+            var index = 0;
+            return function() {
+                console.log('execNext:', ids[index]);
+                if (index === ids.length) {
+                    cb(results);
+                    return;
+                }
+                util.foo(index, 2, function(ok) {
+                    index++;
+                    if (!ok) {
+                        execNext();
+                        return ;
+                    }
+                    elect(ids[index]);
+                })
+            }
+        }());
+        var elect = function(c){
+            console.log('elect, 从',c,'平台获取数据');
+            results.id = c + '账号';
+            if(isExitLogin){
+                cb(results);
+                return;
+            }
+            tryDoing(c);
+        };
+        var tryDoing = function(c){
+            var name='dummy',pwd='dummy';
+            console.log('tryDoing');
+            doing(name,pwd, function(res){
+                results.state = validate(res);
+                if(results.state) {
+                   cb(results);
+                   return;
+                }
+                execNext();
+            });
+        };
+        execNext();
+    };
+
+    var util = {};
+    util.foo = function(n1, n2, callback) {
+        console.log('[ util ]假设最后一个平台可以使用......');
+        if (n1 === n2) {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    };
+}());
+
+var cb = function(result) {
+    console.log('[callback,最终结果](自定义处理)', result);
+    if (result.state) {
+        alert('Complete..')
+    }
+};
+var doing = function(arg1,arg2, fn) {
+    console.log('[doing,模拟登录](自定义登录)',arg1);
+    fn({name:arg1,result:"OK"});
+};
+
+console.log('模拟从外部认证平台获取登录信息！');
+oauth2Lib.exec({
+    doing:doing,
+    validate: function(res) {
+        console.log('[validate,模拟验证](自定义验证)', obj);
+        return obj && obj.result === "OK";
+    },
+    cb:cb,
+    isExitLogin: false
+});
+
+
+
+
+(function () {
+     var name = "Barry";
+})();
+//name // 无法从外部访问变量 name 
+var result = (function () {
+    var name = "Barry";
+    return name;
+})();
+result; // IIFE 执行后返回的结果： "Barry"
+
+/*
+理解IIFE设计模式的关键是要认识到，在ES6之前，JavaScript仅具有函数作用域（因此缺少块作用域），并通过闭包内部的引用传递值。ES6之后情况已不再如此，因为JavaScript的ES6版本使用let和const关键字实现了块作用域。
+
+(function(){})()是匿名函数，主要利用函数内的变量作用域，避免产生全局变量，影响整体页面环境，增加代码的兼容性。
+
+(function(){})是一个标准的函数定义，但是没有赋值给任何变量。所以是没有名字的函数，叫匿名函数。没有名字就无法像普通函数那样随时随地调用了，所以在他定义完成后就马上调用他，后面的括号()是运行这个函数的意思。
+
+如下几种写法作用是相同的：
+!function () {...}();
+~function () {...}();
+-function () {...}();
++function () {...}();
+void function () {...}();
+(function () {...}());
+(function () {...})();
+所以：!function(){}()写法和(function(){})()是相同的
+!function(){}()
+①函数后的();表示要执行这个函数；
+②而();要求前面必须是一个表达式。（最后有js表达式的定义）。
+③所以“!”的作用是将function(){}函数体转为一个函数表达式。
+*/
+    </script>
+</body>
+</html>

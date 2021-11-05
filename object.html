@@ -1,0 +1,27 @@
+<script>
+var person = new Object();  //使用默认构造函数创建了一个person对象
+person.name="kevin";
+person.age=31;
+alert(person.name);    //并用两种方式打印出了Name的属性值
+alert(person["name"])
+//测试该构造函数为新对象定义了默认的属性和方法。
+console.log("toString" in person);//true
+console.log("valueOf" in person);//true
+console.log("constructor" in person);//true
+
+console.log("***************************")
+
+var person2 = 
+  {
+    name:"Kevin",
+    "my age":31,
+    5:"Test" 
+  };                         //使用对象字面量创建对象
+alert(person2.name);
+alert(person2["my age"]);
+alert(person2["5"]);
+
+console.log("toString" in person2);//
+console.log("valueOf" in person2);//
+console.log("constructor" in person2);//
+</script>

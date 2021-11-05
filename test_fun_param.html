@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //函数再调用的问题
+        var test = function(a,b){
+            return function(x,y) {
+                console.log(a,b,x,y)
+            }
+        }
+        //test("a","b")("x","y")
+        var t1 = test("a","b");
+        t1("x","y")
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+	<!--
+事件系统
+
+被观察者：特定的事件
+观察者：继承于事件类的某些对象
+通知：触发该事件类型，触发的对象为目标对象
+通知链：继承链！
+从页面角度为：捕获阶段、冒泡阶段
+从对象角度理解为：超类通知到子类、子类通知到超类
+	-->
+  <div class="container" id="container">
+    <div id="btn">
+        <div id="btn1">按钮1</div>
+        <div id="btn2">按钮2</div>
+    </div>
+  </div>
+
+<script>
+//自定义Event
+/*
+*1.@myFirstEvent 自定义事件类型 
+*2.@selfEvent  自定义事件对象
+*/
+var selfEvent = new CustomEvent('myFirstEvent',{
+    "detail" : {  //可携带额外的数据
+        age : 18
+    },
+    "bubbles" : true,//是否冒泡    回调函数中调用，e.stopPropagation();可以阻止冒泡
+    "cancelable" : false,//是否可以取消  为true时，event.preventDefault();才可以阻止默认动作行为
+});
+
+//获取观察者
+let btn = document.querySelector("#btn")
+let container = document.getElementById("container");
+
+//添加观察
+btn.addEventListener('myFirstEvent', function(e){
+    console.log("btn监听到了事件", e);
+}, false)
+container.addEventListener('myFirstEvent', function(e){
+    console.log("container监听到了事件", e);
+})
+
+//模拟触发
+setTimeout(()=>{
+    // 事件分发，触发通知，触发该通知的节点为目标对象
+    let btn1 = document.getElementById("btn1");
+    btn1.dispatchEvent(selfEvent);
+    /*
+    原生通知：某些操作触发通知，触发该通知的节点为目标对象
+    自定义事件通知：节点对象.dispatchEvent(自定义事件对象)
+         即节点上的某些操作触发，改为逻辑上面的控制,节点对象.dispatchEvent(自定义事件对象)执行
+    */
+}, 5000)
+
+/*
+结果
+btn监听到了事件 CustomEvent
+container监听到了事件 CustomEvent
+*/
+</script>
+</body>
+</html>
