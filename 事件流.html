@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+#outer{
+  border:2px solid #333333;
+}
+#inner{
+  margin:50px;
+  border:2px solid #333333;
+  width:500px;
+  height:50px;
+}
+    </style>
+</head>
+<body>
+
+<div id="outer">outer
+    <div id="inner">inner</div>
+</div>
+
+<ul id="color-ul">
+  <li>red</li>
+  <li>yellow</li>
+  <li>blue</li>
+</ul>
+
+<script>
+var outHandler = function() {
+    alert("outer")
+}
+var innerHandler = function() {
+    alert("inner")
+}
+
+//HTML DOM 事件允许Javascript在HTML文档元素中注册不同事件处理程序。事件通常与函数结合使用,函数不会在事件发生前被执行! (如用户点击按钮)
+//   getEventListeners是chrome提供给我们的一个工具函数，可以通过这个函数来查看当前页面dom 绑定了哪些事件。
+//例子：getEventListeners(document.getElementById("inner"))
+
+//DOM 0 级规范, 在冒泡阶段触发事件处理器
+// outer.onclick = outHandler;
+// inner.onclick = innerHandler;
+
+//DOM 2 级规范, 最后一个值决定这个事件的事件流处理方式是什么？默认情况下布尔值是 false，表示事件处理器是在冒泡阶段触发。当布尔值为 true 时则事件处理器是在捕获阶段触发。
+// //情况一：点击 inner 的时候，会先弹出 inner，后弹出 outer
+// outer.addEventListener("click",outHandler, false);
+// inner.addEventListener("click",innerHandler, false);
+
+// //情况二：点击 inner 的时候，会先弹出 outer，后弹出 inner
+// outer.addEventListener("click",outHandler, true);
+// inner.addEventListener("click",innerHandler, true);
+
+outer.addEventListener("click",function(e){
+        console.log("outer 冒泡事件");
+},false);
+inner.addEventListener("click",function(e){
+        console.log("inner 冒泡事件");
+},false);
+outer.addEventListener("click",function(e){
+        console.log("outer 捕获事件");
+},true);
+inner.addEventListener("click",function(e){
+        console.log("inner 捕获事件");
+},true);
+
+
+//点击页面中的li元素，然后输出li当中的颜色，我们通常会这样写:
+// (function(){
+//   var color_ul = document.getElementById('color-ul');
+//   var color_lis = color_ul.getElementsByTagName('li');
+//   for(var i=0;i<colors.length;i++) {
+//     colors[i].addEventListener('click',showColor,false);
+//   };
+//   function showColor(e){
+//     var x = e.target;
+//     console.log("The color is " + x.innerHTML);
+//   };
+// })();
+//利用事件流的特性，我们只绑定一个事件处理函数也可以完成：
+//动态添加的li也会绑定到事件
+(function(){
+  var color_ul = document.getElementById('color-ul');
+  color_ul.addEventListener('click',showColor,false);
+  function showColor(e){
+      var x = e.target;
+      /*兼容IE
+      var event = e || window.event;
+      var x = event.target || event.srcElement;
+      */
+      if(x.nodeName.toLowerCase() === 'li'){
+          console.log('The color is ' + x.innerHTML);
+      }
+  }
+})();
+
+//event.target 是触发事件的元素，而 event.currentTarget 是事件绑定的元素。也就是说，大部分情况下，当使用事件代理时，event.target 是子元素，而 event.currentTarget 是父级元素。
+//事件的代理（delegation）：由于事件会在冒泡阶段向上传播到父节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件
+
+/*
+js阻止事件冒泡和默认事件
+w3c:e.stopPropagation
+ie:window.event.cancelBubble = true
+默认事件：是指目标元素的默认行为比如a标签会跳转链接 form会提交表单
+w3c:e.preventDefault()
+ie:window.event.returnValue = false
+另外js中的return false也可以阻止默认行为jq中的return false既可以阻止默认行为也可以阻止冒泡
+*/
+</script>
+</body>
+</html>
